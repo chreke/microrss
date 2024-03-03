@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>MicroRSS</title>
+        <!-- <link rel="stylesheet" href="{{ SITEURL }}/{{ THEME_STATIC_DIR }}/css/{{ CSS_FILE }}" /> -->
+</head>
+
+<body id="index" class="home">
+    <header id="banner" class="body">
+        <h1>MicroRSS</h1>
+    </header>
+    <nav id="menu"></nav>
+    <section id="body">
+        <ul>
+            {% for entry in entries %}
+                <li>
+                    <a href="{{ entry.link }}">{{ entry.title }}</a>
+                    posted by
+                    <a href="{{ entry.feed_url }}">{{ entry.feed_title }}</a>
+                    on {{ entry.published.date() }}
+                </li>
+            {% endfor %}
+        </ul>
+    </section>
+</body>
+</html>
