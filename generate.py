@@ -17,7 +17,7 @@ def to_datetime(time_struct):
 def generate_html(entries):
     template = env.get_template("index.html")
     with open("index.html", "w") as f:
-        f.write(template.render(entries=entries))
+        f.write(template.render(entries=entries, last_updated=datetime.datetime.now()))
 
 def main():
     feed_urls = []
