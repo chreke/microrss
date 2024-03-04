@@ -6,5 +6,15 @@ from all the feeds.
 
 ## Usage
 
-Add the URLs of the RSS feeds that you want to subscribe to in the file
-`feeds.txt` (one line per file) then run the `generate.py` script.
+Invoke the script like this:
+
+```sh
+python generate.py INFILE OUTFILE
+```
+
+`INFILE` is expected to be a file containing a list of URLs that point to RSS
+or Atom feeds, with one URL per line. If the `INFILE` argument is omitted,
+URLs will be read from `STDIN`.
+
+`OUTFILE` is the output HTML file. If the `OUTFILE` argument is omitted,
+the output will be sent to `STDOUT`.

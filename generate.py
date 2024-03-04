@@ -1,10 +1,11 @@
+import argparse
 import datetime
+import sys
 import time
 
 import feedparser
 from jinja2 import Environment, PackageLoader, select_autoescape
 
-FEED_FILE = "feeds.txt"
 
 env = Environment(
     loader=PackageLoader("generate"),
@@ -16,12 +17,16 @@ def to_datetime(time_struct):
 
 def generate_html(entries):
     template = env.get_template("index.html")
-    with open("index.html", "w") as f:
-        f.write(template.render(entries=entries, last_updated=datetime.datetime.now()))
+    return template.render(entries=entries, last_updated=datetime.datetime.now())
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('INFILE', nargs='?', type=argparse.FileType('r'), default=sys.stdin)
+    parser.add_argument('OUTFILE', nargs='?', type=argparse.FileType('w'), default=sys.stdout)
+    args = parser.parse_args()
+
     feed_urls = []
-    with open(FEED_FILE) as f:
+    with args.INFILE as f:
         for line in f:
             feed_urls.append(line.strip())
     entries = []
@@ -37,7 +42,8 @@ def main():
                 "source": feed_url
             })
     entries.sort(key=lambda x: x["published"], reverse=True)
-    generate_html(entries)
+    with args.OUTFILE as f:
+        f.write(generate_html(entries))
 
 
 if __name__ == "__main__":
