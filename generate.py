@@ -15,20 +15,7 @@ env = Environment(
 def to_datetime(time_struct):
     return datetime.datetime.fromtimestamp(time.mktime(time_struct))
 
-def generate_html(entries):
-    template = env.get_template("index.html")
-    return template.render(entries=entries, last_updated=datetime.datetime.now())
-
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('INFILE', nargs='?', type=argparse.FileType('r'), default=sys.stdin)
-    parser.add_argument('OUTFILE', nargs='?', type=argparse.FileType('w'), default=sys.stdout)
-    args = parser.parse_args()
-
-    feed_urls = []
-    with args.INFILE as f:
-        for line in f:
-            feed_urls.append(line.strip())
+def generate_html(feed_urls):
     entries = []
     for feed_url in feed_urls:
         feed = feedparser.parse(feed_url)
@@ -42,8 +29,22 @@ def main():
                 "source": feed_url
             })
     entries.sort(key=lambda x: x["published"], reverse=True)
+    template = env.get_template("index.html")
+    return template.render(entries=entries, last_updated=datetime.datetime.now())
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('INFILE', nargs='?', type=argparse.FileType('r'), default=sys.stdin)
+    parser.add_argument('OUTFILE', nargs='?', type=argparse.FileType('w'), default=sys.stdout)
+    args = parser.parse_args()
+
+    feed_urls = []
+    with args.INFILE as f:
+        for line in f:
+            feed_urls.append(line.strip())
+    html = generate_html(feed_urls)
     with args.OUTFILE as f:
-        f.write(generate_html(entries))
+        f.write(html)
 
 
 if __name__ == "__main__":
